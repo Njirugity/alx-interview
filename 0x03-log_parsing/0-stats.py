@@ -1,44 +1,50 @@
-#!/usr/bin/env python3
-"""A script that reads stdin line by line and computes metrics"""
+#!/usr/bin/python3
+
 import sys
-import re
 
 
-def print_log():
+def print_msg(dict_sc, total_file_size):
     """
-     Return:
-            -Total file size
-            -Status code and its count
+    printing data
     """
 
-    print(f'File size: {total}')
-    for code in sorted(status_count.keys()):
-        print(f"{code}: {status_count[code]}")
+    print("File size: {}".format(total_file_size))
+    for key, val in sorted(dict_sc.items()):
+        if val != 0:
+            print("{}: {}".format(key, val))
 
 
-total = 0
-status_count = {}
-line_count = 0
-
+total_file_size = 0
+code = 0
+counter = 0
+dict_sc = {"200": 0,
+           "301": 0,
+           "400": 0,
+           "401": 0,
+           "403": 0,
+           "404": 0,
+           "405": 0,
+           "500": 0
+           }
 
 try:
     for line in sys.stdin:
-        match = re.search(r'"[^"]+" (\d{3}) (\d+)', line)
-        if match:
-            code = match.group(1)
-            file_size = match.group(2)
-            total += int(file_size)
-            if code in status_count:
-                status_count[code] += 1
-            else:
-                status_count[code] = 1
+        parsed_line = line.split()  # ✄ trimming
+        parsed_line = parsed_line[::-1]  # inverting
 
-        line_count += 1
-        if line_count % 10 == 0:
-            print_log()
+        if len(parsed_line) > 2:
+            counter += 1
 
-except KeyboardInterrupt:
-    print_log()
-    raise
+            if counter <= 10:
+                total_file_size += int(parsed_line[0])  # file size
+                code = parsed_line[1]  # status code
 
-print_log()
+                if (code in dict_sc.keys()):
+                    dict_sc[code] += 1
+
+            if (counter == 10):
+                print_msg(dict_sc, total_file_size)
+                counter = 0
+
+finally:
+    print_msg(dict_sc, total_file_size)
