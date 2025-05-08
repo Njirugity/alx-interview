@@ -4,11 +4,6 @@ import sys
 import re
 
 
-total = 0
-status_count = {}
-line_count = 0
-
-
 def print_log():
     """
      Return:
@@ -19,6 +14,11 @@ def print_log():
     print(f'File size: {total}')
     for code in sorted(status_count.keys()):
         print(f"{code}: {status_count[code]}")
+
+
+total = 0
+status_count = {}
+line_count = 0
 
 
 try:
